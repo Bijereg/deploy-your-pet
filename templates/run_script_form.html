@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col"></div>
+    <div class="col">
+        <form action="/script/run/{{ script.get_internal_name() }}" method="post">
+            <fieldset>
+                <legend>{{ script.description }}</legend>
+
+                <div class="form-group">
+                    <label for="internal_class_name" class="form-label mt-4">Internal class name:</label>
+                    <input type="text" class="form-control" id="internal_class_name" disabled=""
+                           value="{{ script.get_internal_name() }}">
+                </div>
+
+                {% for field in script.input_fields %}
+                    <div class="form-group">
+                        <label for="{{ field.name }}_id" class="form-label mt-4">{{ field.description }}:</label>
+                        <input type="{{ field.input_type.html_input_type }}" class="form-control" id="{{ field.name }}_id" name="{{ field.name }}">
+                    </div>
+                {% endfor %}
+            </fieldset>
+            <hr>
+            <button type="submit" class="btn btn-success w-100">Run</button>
+        </form>
+    </div>
+    <div class="col"></div>
+{% endblock %}

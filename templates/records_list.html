@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Internal script name</th>
+            <th scope="col">Start timestamp</th>
+            <th scope="col">End timestamp</th>
+            <th scope="col">Duration (s)</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            {% if record.status == 'FAILED' %}
+            	<tr class="table-danger">
+            {% else %}
+                {% if record.status == 'DONE' %}
+                	<tr class="table-success">
+                {% else %}
+                	{% if record.status == 'KILLED' %}
+                	    <tr class="table-dark">
+                    {% else %}
+                        <tr>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+                <th>
+                    <a href="/records/details/{{ record.id }}">{{ record.id }}</a>
+                </th>
+                <td>{{ record.internal_script_name }}</td>
+                <td>{{ record.start_ts }}</td>
+                <td>{{ record.end_ts }}</td>
+                <td>
+                    {% if record.end_ts %}
+                    	{{ record.end_ts - record.start_ts }}
+                    {% else %}
+                    	{{ now - record.start_ts }}
+                    {% endif %}
+                </td>
+                <td>{{ record.status }}</td>
+                <td>
+                    {% if record.status != 'DONE' and record.status != 'FAILED' and record.status != 'KILLED' %}
+                    	<form action="/records/kill/{{ record.id }}" method="post">
+                            <button type="submit" class="btn btn-danger w-100">Kill</button>
+                        </form>
+                    {% endif %}
+                    <a class="btn btn-info" href="/records/details/{{ record.id }}">Logs</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
